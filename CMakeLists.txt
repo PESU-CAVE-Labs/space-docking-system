@@ -122,6 +122,24 @@ elseif (WIN32)
     target_link_libraries(docking_sim PRIVATE opengl32)
 endif()
 
+# Clean Single-File Simple Simulation (Doc Equations)
+add_executable(simple_docking_sim simple_docking_sim.cpp)
+target_link_libraries(simple_docking_sim PRIVATE glad glfw glm)
+if (APPLE)
+    target_link_libraries(simple_docking_sim PRIVATE "-framework OpenGL" "-framework Cocoa" "-framework IOKit" "-framework CoreVideo")
+elseif (WIN32)
+    target_link_libraries(simple_docking_sim PRIVATE opengl32)
+endif()
+
+# Provenance-Noted Rigid Body Docking Simulation (PESU CAVE Labs / ISRO VDE)
+add_executable(provenance_docking_sim provenance_docking_sim.cpp)
+target_link_libraries(provenance_docking_sim PRIVATE glad glfw glm)
+if (APPLE)
+    target_link_libraries(provenance_docking_sim PRIVATE "-framework OpenGL" "-framework Cocoa" "-framework IOKit" "-framework CoreVideo")
+elseif (WIN32)
+    target_link_libraries(provenance_docking_sim PRIVATE opengl32)
+endif()
+
 # Tests
 enable_testing()
 add_executable(docking_sim_tests
