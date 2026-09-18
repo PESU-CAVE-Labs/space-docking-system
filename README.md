@@ -54,7 +54,23 @@ cmake --build .
 ./docking_sim
 ```
 
-### Controls
+### Running the Cube Docking Simulation (provenance_docking_sim)
+To build and run the 3D cube collision and pose estimation model:
+```bash
+cmake -B build
+cmake --build build --target provenance_docking_sim
+```
+Then run the executable:
+- **Windows**: `.\build\provenance_docking_sim.exe` (or `.\build\Debug\provenance_docking_sim.exe`)
+- **Linux / macOS**: `./build/provenance_docking_sim`
+
+#### Controls:
+- **`1`**: Head-on collision scenario (symmetrical rebound, zero net torque)
+- **`2`**: Off-center collision scenario (generates torque, angular displacement, and spin)
+- **`R`**: Reset simulation
+- **`SPACE`**: Pause / Resume
+
+### Controls for docking_sim
 - **Left-Click + Drag**: Pan the camera orbit around the Target spacecraft.
 - **Scroll Wheel**: Zoom the camera in and out.
 - **CSV Data**: Upon exiting the simulation, you will find `simulation_data.csv` populated with your run's telemetry data in the `build/` directory.
