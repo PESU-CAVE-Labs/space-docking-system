@@ -1,4 +1,5 @@
 # Spacecraft Docking System: 3D Cube Collision & Dynamics Simulation
+My name is prem, shrujanna, spurthi
 
 A real-time 3D rigid-body docking and post-contact pose estimation simulation built in C++17 with OpenGL, GLFW, GLAD, and GLM.
 
