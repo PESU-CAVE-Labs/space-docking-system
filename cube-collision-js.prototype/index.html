@@ -180,7 +180,7 @@ Bungee Elasticity
     type="range"
     min="0"
     max="100"
-    value="50">
+    value="100">
 
 </div>
 
@@ -203,7 +203,7 @@ Bungee Damping
     type="range"
     min="0"
     max="100"
-    value="40">
+    value="100">
 
 </div>
 
@@ -524,7 +524,7 @@ const orbit =
         renderer.domElement
     );
 
-orbit.enableDamping = true;
+orbit.enableDamping = false;
 
 orbit.dampingFactor = 0.08;
 
@@ -651,12 +651,15 @@ const cube2 =
     );
 
 cube2.position.set(
-    2,
-    1,
-    1
+    0,
+    0,
+    0
 );
 
 scene.add(cube2);
+
+// ============================================================
+// ROAP
 
 
 // ============================================================
@@ -2465,6 +2468,41 @@ window.addEventListener('keydown', function (event) {
 
     // Re-enable orbit controls
     orbit.enabled = true;
+  }
+  
+  if (event.key.toLowerCase() === 's') {
+  
+	 // Reset yellow cube
+  cube2.position.set(0, 0, 0);
+  cube2.quaternion.identity();
+
+  // Reset blue cube
+  cube1.position.copy(blueRestPosition);
+  cube1.quaternion.identity();
+
+  // Reset linear velocities
+  blueVelocity.set(0, 0, 0);
+  yellowVelocity.set(0, 0, 0);
+
+  // Reset angular velocities
+  blueAngularVelocity.set(0, 0, 0);
+  yellowAngularVelocity.set(0, 0, 0);
+
+  // Reset collision state
+  collisionActive = false;
+  collisionPenetration = 0;
+  collisionNormal.set(0, 0, 0);
+  contactPoint.set(0, 0, 0);
+  lastImpulse.set(0, 0, 0);
+
+  // Reset dragging state
+  dragging = false;
+  orbit.enabled = true;
+
+  // Reset simulated rotation / GMST
+  gmstTheta = 0;
+
+  console.log("Simulation reset");
   }
 
 });
