@@ -79,8 +79,7 @@ $$
 The force direction is along the rope:
 
 $$
-\hat{\mathbf{d}}
-=
+\hat{\mathbf{d}} =
 \frac{\mathbf{x}_{anchor}-\mathbf{x}_{cube}}
 {\|\mathbf{x}_{anchor}-\mathbf{x}_{cube}\|}
 $$
@@ -88,8 +87,7 @@ $$
 Therefore:
 
 $$
-\mathbf{F}_{spring}
-=
+\mathbf{F}_{spring} =
 k\Delta L\hat{\mathbf{d}}
 $$
 
@@ -108,8 +106,7 @@ $$
 The damping force is:
 
 $$
-\mathbf{F}_{damping}
-=
+\mathbf{F}_{damping}=
 -cv_r\hat{\mathbf{d}}
 $$
 
@@ -117,8 +114,7 @@ The total bungee force becomes:
 
 $$
 \boxed{
-\mathbf{F}
-=
+\mathbf{F}=
 (k\Delta L-cv_r)\hat{\mathbf{d}}
 }
 $$
@@ -180,14 +176,12 @@ A contact point is estimated from the supporting points of the two OBBs.
 The vectors from each cube's center of mass to the contact point are:
 
 $$
-\mathbf{r}_1
-=
+\mathbf{r}_1=
 \mathbf{x}_{contact}-\mathbf{x}_1
 $$
 
 $$
-\mathbf{r}_2
-=
+\mathbf{r}_2=
 \mathbf{x}_{contact}-\mathbf{x}_2
 $$
 
@@ -201,22 +195,16 @@ The velocity at a point on a rigid body is:
 
 $$
 \boxed{
-\mathbf{v}_p
-=
-\mathbf{v}_{CM}
-+
-\boldsymbol{\omega}\times\mathbf{r}
+\mathbf{v}_p=
+\mathbf{v}_{CM} + \boldsymbol{\omega}\times\mathbf{r}
 }
 $$
 
 For the blue cube:
 
 $$
-\mathbf{v}_1
-=
-\mathbf{v}_{blue}
-+
-\boldsymbol{\omega}_{blue}
+\mathbf{v}_1=
+\mathbf{v}_{blue} + \boldsymbol{\omega}_{blue}
 \times
 \mathbf{r}_1
 $$
@@ -224,11 +212,7 @@ $$
 For the yellow cube:
 
 $$
-\mathbf{v}_2
-=
-\mathbf{v}_{yellow}
-+
-\boldsymbol{\omega}_{yellow}
+\mathbf{v}_2 = \mathbf{v}_{yellow} + \boldsymbol{\omega}_{yellow}
 \times
 \mathbf{r}_2
 $$
@@ -236,9 +220,7 @@ $$
 The relative contact velocity is:
 
 $$
-\mathbf{v}_{rel}
-=
-\mathbf{v}_2-\mathbf{v}_1
+\mathbf{v}_{rel} = \mathbf{v}_2-\mathbf{v}_1
 $$
 
 The velocity along the collision normal is:
@@ -302,21 +284,13 @@ The impulse changes the linear velocities.
 For the blue cube:
 
 $$
-\mathbf{v}_1'
-=
-\mathbf{v}_1
--
-\frac{\mathbf{J}}{m_1}
+\mathbf{v}_1' = \mathbf{v}_1 - \frac{\mathbf{J}}{m_1}
 $$
 
 For the yellow cube:
 
 $$
-\mathbf{v}_2'
-=
-\mathbf{v}_2
-+
-\frac{\mathbf{J}}{m_2}
+\mathbf{v}_2' = \mathbf{v}_2 + \frac{\mathbf{J}}{m_2}
 $$
 
 Thus, momentum is transferred between the two bodies.
@@ -330,9 +304,7 @@ An impulse applied away from the center of mass produces torque-like rotational 
 The change in angular momentum is:
 
 $$
-\Delta\mathbf{L}
-=
-\mathbf{r}\times\mathbf{J}
+\Delta\mathbf{L} = \mathbf{r}\times\mathbf{J}
 $$
 
 Using:
@@ -345,33 +317,20 @@ the change in angular velocity is:
 
 $$
 \boxed{
-\Delta\boldsymbol{\omega}
-=
-I^{-1}
-(\mathbf{r}\times\mathbf{J})
+\Delta\boldsymbol{\omega} = I^{-1} (\mathbf{r}\times\mathbf{J})
 }
 $$
 
 For the blue cube:
 
 $$
-\boldsymbol{\omega}_1'
-=
-\boldsymbol{\omega}_1
-+
-I_1^{-1}
-(\mathbf{r}_1\times\mathbf{J})
+\boldsymbol{\omega}_1' = \boldsymbol{\omega}_1 + I_1^{-1} (\mathbf{r}_1\times\mathbf{J})
 $$
 
 For the yellow cube:
 
 $$
-\boldsymbol{\omega}_2'
-=
-\boldsymbol{\omega}_2
--
-I_2^{-1}
-(\mathbf{r}_2\times\mathbf{J})
+\boldsymbol{\omega}_2' = \boldsymbol{\omega}_2 - I_2^{-1} (\mathbf{r}_2\times\mathbf{J})
 $$
 
 This is what allows a collision to change both **position and orientation**.
@@ -437,8 +396,7 @@ The quaternion derivative is:
 
 $$
 \boxed{
-\dot q=
-\frac{1}{2}q\otimes\omega_q
+\dot q= \frac{1}{2}q\otimes\omega_q
 }
 $$
 
@@ -481,27 +439,19 @@ The simulator uses a simple explicit integration scheme.
 For position:
 
 $$
-\mathbf{x}_{t+\Delta t}
-=
-\mathbf{x}_t+
-\mathbf{v}_t\Delta t
+\mathbf{x}_{t+\Delta t} = \mathbf{x}_t + \mathbf{v}_t\Delta t
 $$
 
 For linear velocity:
 
 $$
-\mathbf{v}_{t+\Delta t}
-=
-\mathbf{v}_t+
-\mathbf{a}_t\Delta t
+\mathbf{v}_{t+\Delta t} = \mathbf{v}_t + \mathbf{a}_t\Delta t
 $$
 
 For orientation:
 
 $$
-q_{t+\Delta t}
-=
-q_t+\dot q_t\Delta t
+q_{t+\Delta t} = q_t+\dot q_t\Delta t
 $$
 
 followed by quaternion normalization.
@@ -515,10 +465,7 @@ Collision can introduce angular velocity.
 A small amount of angular damping is applied to prevent persistent numerical rotation:
 
 $$
-\boldsymbol{\omega}_{new}
-=
-\boldsymbol{\omega}_{old}
-e^{-k_d\Delta t}
+\boldsymbol{\omega}_{new} = \boldsymbol{\omega}_{old} e^{-k_d\Delta t}
 $$
 
 where \(k_d\) is the angular damping coefficient.
@@ -555,11 +502,7 @@ The yellow cube's position can be expressed relative to the blue cube:
 
 $$
 \boxed{
-\mathbf{p}_{rel}
-=
-\mathbf{p}_{yellow}
--
-\mathbf{p}_{blue}
+\mathbf{p}_{rel} = \mathbf{p}_{yellow} - \mathbf{p}_{blue}
 }
 $$
 
@@ -600,8 +543,7 @@ $$
 x_{ECI}\\
 y_{ECI}\\
 z_{ECI}
-\end{bmatrix}
-=
+\end{bmatrix} =
 \begin{bmatrix}
 \cos\theta &-\sin\theta&0\\
 \sin\theta &\cos\theta&0\\
@@ -829,32 +771,6 @@ rigid-body-bungee-simulator/
 └── assets/
     └── ...
 ```
-
-If the project is later expanded:
-
-```text
-rigid-body-bungee-simulator/
-│
-├── index.html
-│
-├── js/
-│   ├── physics.js
-│   ├── collision.js
-│   ├── quaternion.js
-│   ├── coordinateFrames.js
-│   └── main.js
-│
-├── css/
-│   └── style.css
-│
-├── assets/
-│   └── ...
-│
-└── README.md
-```
-
----
-
 # Physics Parameters
 
 The current implementation uses simplified parameters suitable for an interactive educational demonstration.
@@ -899,8 +815,7 @@ $$
 ### Impulse
 
 $$
-\mathbf{J}
-=
+\mathbf{J} =
 \int \mathbf{F}\,dt
 $$
 
@@ -913,8 +828,7 @@ $$
 ### Rotational Collision Response
 
 $$
-\Delta\boldsymbol{\omega}
-=
+\Delta\boldsymbol{\omega} =
 I^{-1}
 (\mathbf{r}\times\mathbf{J})
 $$
@@ -922,8 +836,7 @@ $$
 ### Quaternion Orientation
 
 $$
-\dot q
-=
+\dot q =
 \frac{1}{2}q\otimes\omega_q
 $$
 
@@ -942,8 +855,7 @@ $$
 ### Coordinate Transformation
 
 $$
-\mathbf{p}_{ECI}
-=
+\mathbf{p}_{ECI} =
 R(\theta)\mathbf{p}_{ECEF}
 $$
 
@@ -993,23 +905,4 @@ The simulator can be extended with:
 * Verlet or semi-implicit Euler integration
 * Constraint stabilization
 * Energy conservation analysis
-
 ---
-
-# License
-
-Add the appropriate project license here, for example:
-
-```text
-MIT License
-```
-
-if the repository is intended to be released under the MIT license.
-
----
-
-# Author
-
-Developed as an interactive educational demonstration of:
-
-**Rigid Body Dynamics · Collision Physics · Quaternion Rotation · Bungee Physics · Coordinate Frames · ECI/ECEF Visualization**
