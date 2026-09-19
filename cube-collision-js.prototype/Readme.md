@@ -87,8 +87,7 @@ $$
 Therefore:
 
 $$
-\mathbf{F}_{spring}
-=
+\mathbf{F}_{spring} =
 k\Delta L\hat{\mathbf{d}}
 $$
 
