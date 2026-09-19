@@ -19,12 +19,12 @@ A real-time 3D rigid-body docking and post-contact pose estimation simulation bu
 ## Build Instructions
 
 ```bash
-cmake -B build
-cmake --build build
+cmake -B build_win -G "MinGW Makefiles"
+cmake --build build_win --target sim
 ```
 
 ## Running the Simulation
 
-- **Windows:** `.\build\provenance_docking_sim.exe` (or `.\build\Debug\provenance_docking_sim.exe`)
-- **macOS / Linux:** `./build/provenance_docking_sim`
+- **Windows:** `.\sim.exe` (or `.\build_win\sim.exe`)
+
 

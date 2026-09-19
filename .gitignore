@@ -8,3 +8,6 @@ venv/
 *.so
 *.exe
 *.csv
+*.log
+*.ini
+

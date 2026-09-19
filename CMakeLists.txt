@@ -32,15 +32,40 @@ FetchContent_MakeAvailable(glm)
 add_library(glad third_party/glad/src/glad.c)
 target_include_directories(glad PUBLIC third_party/glad/include)
 
-# Provenance Docking Simulation Executable
-add_executable(provenance_docking_sim provenance_docking_sim.cpp)
-target_link_libraries(provenance_docking_sim PRIVATE glad glfw glm)
+# ImGui
+FetchContent_Declare(
+    imgui
+    GIT_REPOSITORY https://github.com/ocornut/imgui.git
+    GIT_TAG        docking
+)
+FetchContent_MakeAvailable(imgui)
+
+add_library(imgui_lib STATIC
+    ${imgui_SOURCE_DIR}/imgui.cpp
+    ${imgui_SOURCE_DIR}/imgui_demo.cpp
+    ${imgui_SOURCE_DIR}/imgui_draw.cpp
+    ${imgui_SOURCE_DIR}/imgui_tables.cpp
+    ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+)
+target_include_directories(imgui_lib PUBLIC
+    ${imgui_SOURCE_DIR}
+    ${imgui_SOURCE_DIR}/backends
+)
+target_link_libraries(imgui_lib PUBLIC glfw glad)
+
+# Sim Executable
+add_executable(sim sim.cpp)
+target_link_libraries(sim PRIVATE glad glfw glm imgui_lib)
 
 if (APPLE)
-    target_link_libraries(provenance_docking_sim PRIVATE "-framework OpenGL" "-framework Cocoa" "-framework IOKit" "-framework CoreVideo")
-    target_compile_definitions(provenance_docking_sim PRIVATE GL_SILENCE_DEPRECATION)
+    target_link_libraries(sim PRIVATE "-framework OpenGL" "-framework Cocoa" "-framework IOKit" "-framework CoreVideo")
+    target_compile_definitions(sim PRIVATE GL_SILENCE_DEPRECATION)
 elseif (WIN32)
-    target_link_libraries(provenance_docking_sim PRIVATE opengl32)
+    target_link_libraries(sim PRIVATE opengl32 winmm -static -static-libgcc -static-libstdc++)
 else()
-    target_link_libraries(provenance_docking_sim PRIVATE GL)
+    target_link_libraries(sim PRIVATE GL)
 endif()
+
+
