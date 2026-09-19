@@ -106,8 +106,7 @@ $$
 The damping force is:
 
 $$
-\mathbf{F}_{damping}
-=
+\mathbf{F}_{damping}=
 -cv_r\hat{\mathbf{d}}
 $$
 
@@ -115,8 +114,7 @@ The total bungee force becomes:
 
 $$
 \boxed{
-\mathbf{F}
-=
+\mathbf{F}=
 (k\Delta L-cv_r)\hat{\mathbf{d}}
 }
 $$
@@ -178,14 +176,12 @@ A contact point is estimated from the supporting points of the two OBBs.
 The vectors from each cube's center of mass to the contact point are:
 
 $$
-\mathbf{r}_1
-=
+\mathbf{r}_1=
 \mathbf{x}_{contact}-\mathbf{x}_1
 $$
 
 $$
-\mathbf{r}_2
-=
+\mathbf{r}_2=
 \mathbf{x}_{contact}-\mathbf{x}_2
 $$
 
@@ -199,22 +195,16 @@ The velocity at a point on a rigid body is:
 
 $$
 \boxed{
-\mathbf{v}_p
-=
-\mathbf{v}_{CM}
-+
-\boldsymbol{\omega}\times\mathbf{r}
+\mathbf{v}_p=
+\mathbf{v}_{CM} + \boldsymbol{\omega}\times\mathbf{r}
 }
 $$
 
 For the blue cube:
 
 $$
-\mathbf{v}_1
-=
-\mathbf{v}_{blue}
-+
-\boldsymbol{\omega}_{blue}
+\mathbf{v}_1=
+\mathbf{v}_{blue} + \boldsymbol{\omega}_{blue}
 \times
 \mathbf{r}_1
 $$
@@ -222,11 +212,7 @@ $$
 For the yellow cube:
 
 $$
-\mathbf{v}_2
-=
-\mathbf{v}_{yellow}
-+
-\boldsymbol{\omega}_{yellow}
+\mathbf{v}_2 = \mathbf{v}_{yellow} + \boldsymbol{\omega}_{yellow}
 \times
 \mathbf{r}_2
 $$
@@ -234,9 +220,7 @@ $$
 The relative contact velocity is:
 
 $$
-\mathbf{v}_{rel}
-=
-\mathbf{v}_2-\mathbf{v}_1
+\mathbf{v}_{rel} = \mathbf{v}_2-\mathbf{v}_1
 $$
 
 The velocity along the collision normal is:
