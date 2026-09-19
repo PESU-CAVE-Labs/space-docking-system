@@ -46,9 +46,9 @@ html, body {
     z-index: 10;
 
     background:
-        rgba(15, 23, 42, 0.96);
+        rgba(255, 255, 255, 0.96);
 
-    color: white;
+    color: #111827;
 
     padding: 18px;
 
@@ -70,7 +70,7 @@ h2 {
     padding-top: 12px;
 
     border-top:
-        1px solid #475569;
+        1px solid #d1d5db;
 }
 
 .control {
@@ -95,6 +95,18 @@ input[type="range"] {
     width: 100%;
 }
 
+.telemetry input.telemetry-input {
+    width: 220px;
+    box-sizing: border-box;
+    padding: 3px 6px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #111827;
+    font-family: monospace;
+    font-size: 11px;
+}
+
 .telemetry {
 
     font-family: monospace;
@@ -112,7 +124,7 @@ input[type="range"] {
 
 .title {
 
-    color: #38bdf8;
+    color: #0369a1;
 
     font-weight: bold;
 
@@ -128,7 +140,7 @@ input[type="range"] {
 
 .no-collision {
 
-    color: #94a3b8;
+    color: #6b7280;
 }
 
 .hint {
@@ -137,7 +149,7 @@ input[type="range"] {
 
     font-size: 11px;
 
-    color: #94a3b8;
+    color: #6b7280;
 
     line-height: 1.5;
 }
@@ -299,38 +311,32 @@ WORLD / SIMULATION FRAME
 
 <div class="row">
 Blue position:
-<span id="blue-world">
-</span>
+<input id="blue-world" class="telemetry-input" type="text" value="" aria-label="blue-world">
 </div>
 
 <div class="row">
 Yellow position:
-<span id="yellow-world">
-</span>
+<input id="yellow-world" class="telemetry-input" type="text" value="" aria-label="yellow-world">
 </div>
 
 <div class="row">
 Blue velocity:
-<span id="blue-velocity">
-</span>
+<input id="blue-velocity" class="telemetry-input" type="text" value="" aria-label="blue-velocity">
 </div>
 
 <div class="row">
 Yellow velocity:
-<span id="yellow-velocity">
-</span>
+<input id="yellow-velocity" class="telemetry-input" type="text" value="" aria-label="yellow-velocity">
 </div>
 
 <div class="row">
 Blue angular velocity:
-<span id="blue-angular">
-</span>
+<input id="blue-angular" class="telemetry-input" type="text" value="" aria-label="blue-angular">
 </div>
 
 <div class="row">
 Yellow angular velocity:
-<span id="yellow-angular">
-</span>
+<input id="yellow-angular" class="telemetry-input" type="text" value="" aria-label="yellow-angular">
 </div>
 
 </div>
@@ -455,11 +461,11 @@ const scene =
     new THREE.Scene();
 
 scene.background =
-    new THREE.Color(0x0f172a);
+    new THREE.Color(0xffffff);
 
 scene.fog =
     new THREE.FogExp2(
-        0x0f172a,
+        0xffffff,
         0.015
     );
 
@@ -659,7 +665,7 @@ cube2.position.set(
 scene.add(cube2);
 
 // ============================================================
-// ROAP
+// 
 
 
 // ============================================================
@@ -1877,55 +1883,79 @@ function updateTelemetry() {
     // WORLD
     // --------------------------------------------------------
 
-    document.getElementById(
-        "blue-world"
-    ).textContent =
-        vecText(
-            cube1.position
+    const blue_world_input =
+        document.getElementById(
+            "blue-world"
         );
 
+    if (document.activeElement !== blue_world_input) {
+        blue_world_input.value =
+            vecText(
+                cube1.position
+            );
+    }
 
-    document.getElementById(
-        "yellow-world"
-    ).textContent =
-        vecText(
-            cube2.position
+    const yellow_world_input =
+        document.getElementById(
+            "yellow-world"
         );
 
+    if (document.activeElement !== yellow_world_input) {
+        yellow_world_input.value =
+            vecText(
+                cube2.position
+            );
+    }
 
-    document.getElementById(
-        "blue-velocity"
-    ).textContent =
-        vecText(
-            blueVelocity
+    const blue_velocity_input =
+        document.getElementById(
+            "blue-velocity"
         );
 
+    if (document.activeElement !== blue_velocity_input) {
+        blue_velocity_input.value =
+            vecText(
+                blueVelocity
+            );
+    }
 
-    document.getElementById(
-        "yellow-velocity"
-    ).textContent =
-        vecText(
-            yellowVelocity
+    const yellow_velocity_input =
+        document.getElementById(
+            "yellow-velocity"
         );
 
+    if (document.activeElement !== yellow_velocity_input) {
+        yellow_velocity_input.value =
+            vecText(
+                yellowVelocity
+            );
+    }
 
-    document.getElementById(
-        "blue-angular"
-    ).textContent =
-        vecText(
-            blueAngularVelocity
+    const blue_angular_input =
+        document.getElementById(
+            "blue-angular"
         );
 
+    if (document.activeElement !== blue_angular_input) {
+        blue_angular_input.value =
+            vecText(
+                blueAngularVelocity
+            );
+    }
 
-    document.getElementById(
-        "yellow-angular"
-    ).textContent =
-        vecText(
-            yellowAngularVelocity
+    const yellow_angular_input =
+        document.getElementById(
+            "yellow-angular"
         );
 
+    if (document.activeElement !== yellow_angular_input) {
+        yellow_angular_input.value =
+            vecText(
+                yellowAngularVelocity
+            );
+    }
 
-    // --------------------------------------------------------
+
     // RELATIVE FRAME
     // --------------------------------------------------------
 
@@ -2309,6 +2339,76 @@ renderer.domElement.addEventListener(
 
 
 // ============================================================
+// EDITABLE WORLD / SIMULATION VALUES
+// ============================================================
+
+function readVectorInput(id) {
+
+    const input =
+        document.getElementById(id);
+
+    const values =
+        input.value
+            .replace(/[()]/g, "")
+            .split(",")
+            .map(Number);
+
+    if (values.length !== 3 || values.some(v => !Number.isFinite(v))) {
+        return null;
+    }
+
+    return new THREE.Vector3(
+        values[0],
+        values[1],
+        values[2]
+    );
+}
+
+function applyVectorInput(id, target) {
+
+    const value = readVectorInput(id);
+
+    if (value) {
+        target.copy(value);
+        document.getElementById(id).value = vecText(target);
+    }
+    else {
+        updateTelemetry();
+    }
+}
+
+document.getElementById("blue-world")
+    .addEventListener("change", () =>
+        applyVectorInput("blue-world", cube1.position)
+    );
+
+document.getElementById("yellow-world")
+    .addEventListener("change", () =>
+        applyVectorInput("yellow-world", cube2.position)
+    );
+
+document.getElementById("blue-velocity")
+    .addEventListener("change", () =>
+        applyVectorInput("blue-velocity", blueVelocity)
+    );
+
+document.getElementById("yellow-velocity")
+    .addEventListener("change", () =>
+        applyVectorInput("yellow-velocity", yellowVelocity)
+    );
+
+document.getElementById("blue-angular")
+    .addEventListener("change", () =>
+        applyVectorInput("blue-angular", blueAngularVelocity)
+    );
+
+document.getElementById("yellow-angular")
+    .addEventListener("change", () =>
+        applyVectorInput("yellow-angular", yellowAngularVelocity)
+    );
+
+
+// ============================================================
 // ANIMATION
 // ============================================================
 
@@ -2447,6 +2547,11 @@ window.addEventListener(
     }
 );
 
+// ============================================================
+// PRESS R TO RESET THE YELLOW CUBES
+// PRESS S TO RESET THE FULL SCENE
+// ============================================================
+
 window.addEventListener('keydown', function (event) {
 
   if (event.key.toLowerCase() === 'r') {
@@ -2506,6 +2611,8 @@ window.addEventListener('keydown', function (event) {
   }
 
 });
+
+
 
 </script>
 
