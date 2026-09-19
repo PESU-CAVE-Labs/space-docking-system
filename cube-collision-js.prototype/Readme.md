@@ -905,23 +905,4 @@ The simulator can be extended with:
 * Verlet or semi-implicit Euler integration
 * Constraint stabilization
 * Energy conservation analysis
-
 ---
-
-# License
-
-Add the appropriate project license here, for example:
-
-```text
-MIT License
-```
-
-if the repository is intended to be released under the MIT license.
-
----
-
-# Author
-
-Developed as an interactive educational demonstration of:
-
-**Rigid Body Dynamics · Collision Physics · Quaternion Rotation · Bungee Physics · Coordinate Frames · ECI/ECEF Visualization**
