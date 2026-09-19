@@ -18,17 +18,58 @@
 
 <style>
 
+/* Theme variables */
+:root {
+    --page-bg: #ffffff;
+    --panel-bg: rgba(255, 255, 255, 0.96);
+    --text: #111827;
+    --border: #d1d5db;
+    --input-bg: #ffffff;
+    --input-text: #111827;
+    --muted: #6b7280;
+    --grid-major: #475569;
+    --grid-minor: #334155;
+}
+
+body.dark-theme {
+    --page-bg: #111827;
+    --panel-bg: rgba(17, 24, 39, 0.96);
+    --text: #f9fafb;
+    --border: #374151;
+    --input-bg: #1f2937;
+    --input-text: #f9fafb;
+    --muted: #9ca3af;
+    --grid-major: #6b7280;
+    --grid-minor: #4b5563;
+}
+
 html, body {
     margin: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
     font-family: Arial, sans-serif;
+    background: var(--page-bg);
+    color: var(--text);
 }
 
 #canvas-container {
     position: absolute;
     inset: 0;
+}
+
+#theme-toggle {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 20;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--panel-bg);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 12px;
 }
 
 #ui {
@@ -45,10 +86,9 @@ html, body {
 
     z-index: 10;
 
-    background:
-        rgba(255, 255, 255, 0.96);
+    background: var(--panel-bg);
 
-    color: #111827;
+    color: var(--text);
 
     padding: 18px;
 
@@ -70,7 +110,7 @@ h2 {
     padding-top: 12px;
 
     border-top:
-        1px solid #d1d5db;
+        1px solid var(--border);
 }
 
 .control {
@@ -99,10 +139,10 @@ input[type="range"] {
     width: 220px;
     box-sizing: border-box;
     padding: 3px 6px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--border);
     border-radius: 4px;
-    background: #ffffff;
-    color: #111827;
+    background: var(--input-bg);
+    color: var(--input-text);
     font-family: monospace;
     font-size: 11px;
 }
@@ -161,6 +201,7 @@ input[type="range"] {
 
 <body>
 
+<button id="theme-toggle" type="button" aria-label="Toggle dark and light theme">Dark</button>
 
 <div id="canvas-container"></div>
 
@@ -471,6 +512,30 @@ scene.fog =
 
 
 // ============================================================
+// THEME
+// ============================================================
+
+const themeToggle =
+    document.getElementById("theme-toggle");
+
+function updateTheme() {
+    const dark = document.body.classList.contains("dark-theme");
+
+    scene.background.set(dark ? 0x111827 : 0xffffff);
+    scene.fog.color.set(dark ? 0x111827 : 0xffffff);
+    grid.material.color.set(dark ? 0x6b7280 : 0x475569);
+    grid.material.vertexColors = false;
+
+    themeToggle.textContent = dark ? "Light" : "Dark";
+}
+
+themeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark-theme");
+    updateTheme();
+});
+
+
+// ============================================================
 // CAMERA
 // ============================================================
 
@@ -579,14 +644,17 @@ scene.add(light);
 // GRID
 // ============================================================
 
-scene.add(
+const grid =
     new THREE.GridHelper(
         20,
         20,
         0x475569,
         0x334155
-    )
-);
+    );
+
+scene.add(grid);
+
+updateTheme();
 
 
 // ============================================================
