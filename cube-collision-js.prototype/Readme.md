@@ -79,8 +79,7 @@ $$
 The force direction is along the rope:
 
 $$
-\hat{\mathbf{d}}
-=
+\hat{\mathbf{d}} =
 \frac{\mathbf{x}_{anchor}-\mathbf{x}_{cube}}
 {\|\mathbf{x}_{anchor}-\mathbf{x}_{cube}\|}
 $$
