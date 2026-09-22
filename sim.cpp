@@ -7,6 +7,7 @@
 #include <vector>
 #include <iomanip>
 #include <string>
+#include <algorithm>
 
 #include <thread>
 #include <atomic>
@@ -507,9 +508,14 @@ struct SimulationState
 {
     Vec3 cube1Position;
     Quat cube1Orientation;
+    Vec3 cube1Velocity;
     Vec3 cube2Position;
     Quat cube2Orientation;
+    Vec3 cube2Velocity;
     uint64_t physicsStep;
+    bool contactOccurred;
+    bool paused;
+    int scenario;
 };
 
 
@@ -666,9 +672,14 @@ void PublishState(uint64_t physicsStep)
 
     buffer.state.cube1Position = g_target.position;
     buffer.state.cube1Orientation = g_target.attitude;
+    buffer.state.cube1Velocity = g_target.velocity;
     buffer.state.cube2Position = g_chaser.position;
     buffer.state.cube2Orientation = g_chaser.attitude;
+    buffer.state.cube2Velocity = g_chaser.velocity;
     buffer.state.physicsStep = physicsStep;
+    buffer.state.contactOccurred = g_contactOccurred;
+    buffer.state.paused = g_paused;
+    buffer.state.scenario = static_cast<int>(g_currentScenario);
 
     // Even = complete
     buffer.sequence.store(sequence + 2, std::memory_order_release);
@@ -1024,8 +1035,62 @@ void RenderCube(
 
 // ============================================================
 // 26. ON-SCREEN SIMULATION DATA
-// ImGui panel showing live position and quaternion of both cubes.
+// ImGui panel showing live telemetry, cube poses, and simulation controls.
 // ============================================================
+void SetupImGuiStyle()
+{
+    ImGuiStyle& style = ImGui::GetStyle();
+
+    style.WindowPadding     = ImVec2(20.0f, 18.0f);
+    style.WindowRounding    = 12.0f;
+    style.ChildRounding     = 8.0f;
+    style.FrameRounding     = 6.0f;
+    style.PopupRounding     = 8.0f;
+    style.ScrollbarRounding = 8.0f;
+    style.GrabRounding      = 4.0f;
+    style.TabRounding       = 6.0f;
+
+    style.FramePadding      = ImVec2(10.0f, 6.0f);
+    style.ItemSpacing       = ImVec2(10.0f, 8.0f);
+    style.ItemInnerSpacing  = ImVec2(8.0f, 5.0f);
+    style.WindowBorderSize  = 1.0f;
+    style.FrameBorderSize   = 0.0f;
+
+    ImVec4* colors = style.Colors;
+    colors[ImGuiCol_Text]                  = ImVec4(0.93f, 0.95f, 0.98f, 1.00f);
+    colors[ImGuiCol_TextDisabled]          = ImVec4(0.55f, 0.62f, 0.72f, 1.00f);
+    colors[ImGuiCol_WindowBg]              = ImVec4(0.08f, 0.10f, 0.14f, 0.88f);
+    colors[ImGuiCol_ChildBg]               = ImVec4(0.11f, 0.14f, 0.20f, 0.50f);
+    colors[ImGuiCol_PopupBg]               = ImVec4(0.10f, 0.12f, 0.17f, 0.95f);
+    colors[ImGuiCol_Border]                = ImVec4(0.24f, 0.32f, 0.46f, 0.65f);
+    colors[ImGuiCol_BorderShadow]          = ImVec4(0.00f, 0.00f, 0.00f, 0.40f);
+    colors[ImGuiCol_FrameBg]               = ImVec4(0.14f, 0.18f, 0.26f, 0.70f);
+    colors[ImGuiCol_FrameBgHovered]        = ImVec4(0.20f, 0.26f, 0.38f, 0.85f);
+    colors[ImGuiCol_FrameBgActive]         = ImVec4(0.25f, 0.32f, 0.46f, 0.95f);
+    colors[ImGuiCol_TitleBg]               = ImVec4(0.10f, 0.13f, 0.19f, 1.00f);
+    colors[ImGuiCol_TitleBgActive]         = ImVec4(0.14f, 0.19f, 0.28f, 1.00f);
+    colors[ImGuiCol_TitleBgCollapsed]      = ImVec4(0.08f, 0.10f, 0.14f, 0.75f);
+    colors[ImGuiCol_MenuBarBg]             = ImVec4(0.12f, 0.15f, 0.22f, 1.00f);
+    colors[ImGuiCol_ScrollbarBg]           = ImVec4(0.08f, 0.10f, 0.14f, 0.40f);
+    colors[ImGuiCol_ScrollbarGrab]         = ImVec4(0.24f, 0.32f, 0.45f, 0.80f);
+    colors[ImGuiCol_ScrollbarGrabHovered]  = ImVec4(0.32f, 0.42f, 0.58f, 0.90f);
+    colors[ImGuiCol_ScrollbarGrabActive]   = ImVec4(0.40f, 0.52f, 0.72f, 1.00f);
+    colors[ImGuiCol_CheckMark]             = ImVec4(0.30f, 0.75f, 0.95f, 1.00f);
+    colors[ImGuiCol_SliderGrab]            = ImVec4(0.30f, 0.75f, 0.95f, 0.80f);
+    colors[ImGuiCol_SliderGrabActive]      = ImVec4(0.40f, 0.85f, 1.00f, 1.00f);
+    colors[ImGuiCol_Button]                = ImVec4(0.16f, 0.22f, 0.32f, 0.85f);
+    colors[ImGuiCol_ButtonHovered]         = ImVec4(0.24f, 0.34f, 0.48f, 0.95f);
+    colors[ImGuiCol_ButtonActive]          = ImVec4(0.30f, 0.42f, 0.60f, 1.00f);
+    colors[ImGuiCol_Header]                = ImVec4(0.18f, 0.25f, 0.36f, 0.70f);
+    colors[ImGuiCol_HeaderHovered]         = ImVec4(0.25f, 0.35f, 0.50f, 0.80f);
+    colors[ImGuiCol_HeaderActive]          = ImVec4(0.30f, 0.42f, 0.60f, 0.90f);
+    colors[ImGuiCol_Separator]             = ImVec4(0.22f, 0.30f, 0.42f, 0.70f);
+    colors[ImGuiCol_SeparatorHovered]      = ImVec4(0.30f, 0.42f, 0.60f, 0.80f);
+    colors[ImGuiCol_SeparatorActive]       = ImVec4(0.40f, 0.55f, 0.80f, 1.00f);
+    colors[ImGuiCol_PlotLines]             = ImVec4(0.40f, 0.75f, 0.95f, 1.00f);
+    colors[ImGuiCol_PlotHistogram]         = ImVec4(0.30f, 0.75f, 0.95f, 1.00f);
+}
+
 static void DrawCubeBlock(const char* title, const Vec3& p, const Quat& q)
 {
     ImGui::Text("%s", title);
@@ -1048,14 +1113,20 @@ static void DrawCubeBlock(const char* title, const Vec3& p, const Quat& q)
 
 void RenderSimulationText(const SimulationState& state)
 {
-    ImGui::SetNextWindowPos(ImVec2(15.0f, 15.0f), ImGuiCond_Always);
+    float displayWidth = ImGui::GetIO().DisplaySize.x;
+    float displayHeight = ImGui::GetIO().DisplaySize.y;
+
+    float panelWidth = std::clamp(displayWidth * 0.35f, 520.0f, 720.0f);
+    float panelHeight = displayHeight - 24.0f;
+
+    ImGui::SetNextWindowPos(ImVec2(12.0f, 12.0f), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight), ImGuiCond_Always);
 
     ImGui::Begin(
         "Simulation State",
         nullptr,
         ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoCollapse |
-        ImGuiWindowFlags_AlwaysAutoResize
+        ImGuiWindowFlags_NoCollapse
     );
 
     DrawCubeBlock("CUBE 1 - TARGET", state.cube1Position, state.cube1Orientation);
@@ -1071,6 +1142,7 @@ void RenderSimulationText(const SimulationState& state)
     ImGui::Spacing();
 
     ImGui::Text("Physics");
+    ImGui::Separator();
     ImGui::Text("  Step: %llu", static_cast<unsigned long long>(state.physicsStep));
     ImGui::Text("  Frequency: 500 Hz");
     ImGui::Text("  Timestep: 2 ms");
@@ -1156,8 +1228,9 @@ int main()
 
     ImGuiIO& io = ImGui::GetIO();
     (void)io;
+    io.FontGlobalScale = 2.0f;
 
-    ImGui::StyleColorsDark();
+    SetupImGuiStyle();
 
     ImGui_ImplGlfw_InitForOpenGL(g_window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
@@ -1169,9 +1242,14 @@ int main()
     {
         g_stateBuffers[i].state.cube1Position = g_target.position;
         g_stateBuffers[i].state.cube1Orientation = g_target.attitude;
+        g_stateBuffers[i].state.cube1Velocity = g_target.velocity;
         g_stateBuffers[i].state.cube2Position = g_chaser.position;
         g_stateBuffers[i].state.cube2Orientation = g_chaser.attitude;
+        g_stateBuffers[i].state.cube2Velocity = g_chaser.velocity;
         g_stateBuffers[i].state.physicsStep = 0;
+        g_stateBuffers[i].state.contactOccurred = false;
+        g_stateBuffers[i].state.paused = false;
+        g_stateBuffers[i].state.scenario = 1;
         g_stateBuffers[i].sequence.store(0);
     }
 
@@ -1197,6 +1275,15 @@ int main()
         glViewport(0, 0, windowWidth, windowHeight);
 
         SimulationState renderState = GetLatestRenderState();
+
+        // Dynamically scale font based on resolution (really big and easy to read)
+        ImGuiIO& io = ImGui::GetIO();
+        if (windowHeight >= 1000)
+            io.FontGlobalScale = 2.40f;
+        else if (windowHeight >= 850)
+            io.FontGlobalScale = 2.10f;
+        else
+            io.FontGlobalScale = 1.90f;
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
